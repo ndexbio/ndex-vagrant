@@ -1,4 +1,4 @@
-create role ndexserver LOGIN password 'my_password' NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+create role ndexserver LOGIN password 'ndex' NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
 
 ALTER ROLE ndexserver
 SET search_path = core, "$user", public;
