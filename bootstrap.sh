@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # install base packages
-yum install -y epel-release git gzip tar java-1.8.0-openjdk java-1.8.0-openjdk-devel wget httpd
+yum install -y epel-release git gzip tar java-1.8.0-openjdk java-1.8.0-openjdk-devel wget httpd lsof
 yum install -y python2-pip
 pip install gevent
 pip install gevent_websocket
@@ -40,4 +40,14 @@ sudo -u postgres psql < /vagrant/psql.cmds
 sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
 
 echo "local ndex ndexserver md5" >> /var/lib/pgsql/9.5/data/pg_hba.conf
- 
+#echo "localhost ndex ndexserver md5" >> /var/lib/pgsql/9.5/data/pg_hba.conf 
+
+# need to fix pg_hba.conf to switch from ident to trust
+
+# restart postgres service
+service postgresql-9.5.service restart
+
+service httpd start
+sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
+sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
+
