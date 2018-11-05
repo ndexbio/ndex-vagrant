@@ -13,6 +13,12 @@ pip install pysolr
 # open port 80 for http
 firewall-cmd --permanent --add-port=80/tcp
 
+# open port 8080 for http
+firewall-cmd --permanent --add-port=8080/tcp
+
+# restart firewalld
+service firewalld restart
+
 # download and install postgres 9.5
 yum install -y https://download.postgresql.org/pub/repos/yum/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-3.noarch.rpm
 yum install -y postgresql95 postgresql95-server
@@ -39,15 +45,22 @@ chmod go-wx /etc/httpd/conf.d/ndex.conf
 sudo -u postgres psql < /vagrant/psql.cmds
 sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
 
-echo "local ndex ndexserver md5" >> /var/lib/pgsql/9.5/data/pg_hba.conf
-#echo "localhost ndex ndexserver md5" >> /var/lib/pgsql/9.5/data/pg_hba.conf 
-
-# need to fix pg_hba.conf to switch from ident to trust
+# Add postgres user permissions
+echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
+echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
+cat /var/lib/pgsql/9.5/data/pg_hba.conf >> /tmp/pg_hba.conf
+mv -f /tmp/pg_hba.conf /var/lib/pgsql/9.5/data/pg_hba.conf
 
 # restart postgres service
-service postgresql-9.5.service restart
+service postgresql-9.5 restart
+
+# Fix url in ndex-webapp-config.js
+cat /opt/ndex/conf/ndex-webapp-config.js | sed  "s/^ *ndexServerUri:.*/    ndexServerUri: \"http:\/\/localhost:8081\/v2\",/g" > /tmp/t.json
+mv -f /tmp/t.json /opt/ndex/conf/ndex-webapp-config.js
+chown ndex.ndex /opt/ndex/conf/ndex-webapp-config.js
 
 service httpd start
 sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
 
+echo "On your browser visit http://localhost:8081"
