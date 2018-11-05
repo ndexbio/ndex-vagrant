@@ -1,5 +1,6 @@
-vagrant: https://www.vagrantup.com/
-virtualbox: https://www.virtualbox.org/
+[vagrant]: https://www.vagrantup.com/
+[virtualbox]: https://www.virtualbox.org/
+
 # ndex-vagrant
 
 Creates virtual machine with ndex installed following 
