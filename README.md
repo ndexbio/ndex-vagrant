@@ -4,7 +4,9 @@
 # ndex-vagrant
 
 Creates virtual machine with ndex installed following 
-instructions found here: http://www.home.ndexbio.org/installation-instructions/
+instructions found here: 
+
+http://www.home.ndexbio.org/installation-instructions/
 
 ## Requirements
 
@@ -14,7 +16,7 @@ instructions found here: http://www.home.ndexbio.org/installation-instructions/
 
 * [Virtual Box][virtualbox]
 
-# To run
+## To run
 
 ```Bash
 git clone https://github.com/coleslaw481/ndex-vagrant.git
@@ -24,7 +26,7 @@ vagrant up
 # Visit http://localhost:8081 on browser
 ```
 
-# To shutdown
+## To shutdown
 
 From `ndex-vagrant` directory run the following command:
 
