@@ -1,6 +1,7 @@
 [vagrant]: https://www.vagrantup.com/
 [virtualbox]: https://www.virtualbox.org/
-
+[git]: https://git-scm.com/
+ 
 # ndex-vagrant
 
 Creates virtual machine with ndex installed following 
@@ -9,6 +10,10 @@ instructions found here:
 http://www.home.ndexbio.org/installation-instructions/
 
 ## Requirements
+
+* Mac or Linux box (should work on Windows, but have not tested)
+
+* [Git] client
 
 * At least 8gb of ram, ideally 16gb
 
