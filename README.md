@@ -23,6 +23,8 @@ http://www.home.ndexbio.org/installation-instructions/
 
 ## To run
 
+Open a terminal and run the following commands:
+
 ```Bash
 git clone https://github.com/coleslaw481/ndex-vagrant.git
 cd ndex-vagrant
@@ -31,9 +33,11 @@ vagrant up
 # Visit http://localhost:8081 on browser
 ```
 
+Once above is completed visit http://localhost:8081, via a webbrowser, on the same machine the above commands were invoked.
+
 ## To shutdown
 
-From `ndex-vagrant` directory run the following command:
+From `ndex-vagrant` directory run the following command from a terminal:
 
 ```Bash
 vagrant destroy
