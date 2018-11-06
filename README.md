@@ -14,10 +14,20 @@ instructions found here: http://www.home.ndexbio.org/installation-instructions/
 
 * [Virtual Box][virtualbox]
 
+# To run
+
 ```Bash
 git clone https://github.com/coleslaw481/ndex-vagrant.git
 cd ndex-vagrant
 vagrant up
 
 # Visit http://localhost:8081 on browser
+```
+
+# To shutdown
+
+From `ndex-vagrant` directory run the following command:
+
+```Bash
+vagrant destroy
 ```
