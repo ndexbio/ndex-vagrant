@@ -63,4 +63,6 @@ service httpd start
 sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
 
+sleep 10
+
 echo "On your browser visit http://localhost:8081"
