@@ -63,6 +63,12 @@ service httpd start
 sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
 
+# install miniconda3
+sudo -u ndex wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+chmod a+x Miniconda3-latest-Linux-x86_64.sh
+
+sudo -u ndex ./Miniconda3-latest-Linux-x86_64.sh -p /opt/ndex/miniconda3 -b
+
 sleep 10
 
 echo "On your browser visit http://localhost:8081"
