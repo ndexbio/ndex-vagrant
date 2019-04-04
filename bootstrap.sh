@@ -63,6 +63,9 @@ service httpd start
 sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
 
+# start neighborhood query service
+sudo -u ndex /opt/ndex/query_engine/run.sh
+
 # install miniconda3
 sudo -u ndex wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod a+x Miniconda3-latest-Linux-x86_64.sh
