@@ -64,14 +64,16 @@ sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
 
 # start neighborhood query service
+pushd /opt/ndex/query_engine
 sudo -u ndex /opt/ndex/query_engine/run.sh
+popd
 
 # install miniconda3
-sudo -u ndex wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 chmod a+x Miniconda3-latest-Linux-x86_64.sh
 
 sudo -u ndex ./Miniconda3-latest-Linux-x86_64.sh -p /opt/ndex/miniconda3 -b
-
+rm -f Miniconda3-latest-Linux-x86_64.sh
 sleep 10
 
 echo "On your browser visit http://localhost:8081"
