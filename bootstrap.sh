@@ -33,8 +33,11 @@ useradd -M -r -s /bin/false -U ndex
 
 # download and install ndex tarball
 cd /opt
-wget ftp://ftp.ndexbio.org/NDEx-v2.3.1/ndex-2.3.1.tar.gz
-tar -zxf ndex-2.3.1.tar.gz
+# wget ftp://ftp.ndexbio.org/NDEx-v2.3.1/ndex-2.3.1.tar.gz
+# tar -zxf ndex-2.3.1.tar.gz
+cp /vagrant/ndex-2.4.4.tar.gz .
+tar -zxf ndex-2.4.4.tar.gz
+mv ndex-2.4.4 ndex
 chown -R ndex.ndex ndex
 
 # copy over apache config for ndex
@@ -60,7 +63,7 @@ mv -f /tmp/t.json /opt/ndex/conf/ndex-webapp-config.js
 chown ndex.ndex /opt/ndex/conf/ndex-webapp-config.js
 
 service httpd start
-sudo -u ndex /opt/ndex/solr/bin/solr start -m 1g
+sudo -u ndex /opt/ndex/solr/bin/solr start
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
 
 # start neighborhood query service
