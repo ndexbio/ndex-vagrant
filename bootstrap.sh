@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
 
+# Check for NDEx tarball
+cd /opt
+ndextarball=`find /vagrant -name "ndex-*.tar.gz"`
+if [ $? -ne 0 ] ; then
+  echo "ERROR no NDEx tarball found. tarball can be downloaded from ftp://ftp.ndexbio.org/"
+  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.3.1/"
+  exit 1
+fi
+
+if [ ! -f "$ndextarball" ] ; then
+  echo "ERROR no NDEx tarball found. tarball can be downloaded from ftp://ftp.ndexbio.org/"
+  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.3.1/"
+  exit 1
+fi
+ndextarballname=`basename $ndextarball`
+echo "ndextarball => $ndextarball"
+echo "ndextarballname => $ndextarballname"
+
 # install base packages
 yum install -y epel-release git gzip tar java-1.8.0-openjdk java-1.8.0-openjdk-devel wget httpd lsof
 yum install -y python2-pip
@@ -31,13 +49,11 @@ systemctl start postgresql-9.5
 # add ndex user
 useradd -M -r -s /bin/false -U ndex
 
-# download and install ndex tarball
-cd /opt
-# wget ftp://ftp.ndexbio.org/NDEx-v2.3.1/ndex-2.3.1.tar.gz
-# tar -zxf ndex-2.3.1.tar.gz
-cp /vagrant/ndex-2.4.4.tar.gz .
-tar -zxf ndex-2.4.4.tar.gz
-mv ndex-2.4.4 ndex
+# Install ndex tarball
+echo "Using $ndextarballname as source for ndex"
+cp $ndextarball .
+tar -zxf $ndextarballname
+mv `echo $ndextarballname | sed "s/\.tar\.gz//"` ndex
 chown -R ndex.ndex ndex
 
 # copy over apache config for ndex
