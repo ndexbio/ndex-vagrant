@@ -93,6 +93,8 @@ chmod a+x Miniconda3-latest-Linux-x86_64.sh
 
 sudo -u ndex ./Miniconda3-latest-Linux-x86_64.sh -p /opt/ndex/miniconda3 -b
 rm -f Miniconda3-latest-Linux-x86_64.sh
+
+/opt/ndex/miniconda3/bin/pip install ndex_webapp_python_exporters
 sleep 10
 
 echo "On your browser visit http://localhost:8081"
