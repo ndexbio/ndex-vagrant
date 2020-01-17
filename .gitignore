@@ -1,3 +1,4 @@
 .vagrant/
 dist/
 ndex-2.4.4.tar.gz
+.DS_Store
