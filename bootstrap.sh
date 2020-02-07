@@ -5,13 +5,13 @@ cd /opt
 ndextarball=`find /vagrant -name "ndex-*.tar.gz"`
 if [ $? -ne 0 ] ; then
   echo "ERROR no NDEx tarball found. tarball can be downloaded from ftp://ftp.ndexbio.org/"
-  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.3.1/"
+  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.4.4/"
   exit 1
 fi
 
 if [ ! -f "$ndextarball" ] ; then
   echo "ERROR no NDEx tarball found. tarball can be downloaded from ftp://ftp.ndexbio.org/"
-  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.3.1/"
+  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.4.4/"
   exit 1
 fi
 ndextarballname=`basename $ndextarball`
@@ -19,7 +19,7 @@ echo "ndextarball => $ndextarball"
 echo "ndextarballname => $ndextarballname"
 
 # install base packages
-yum install -y epel-release git gzip tar java-1.8.0-openjdk java-1.8.0-openjdk-devel wget httpd lsof
+yum install -y epel-release git gzip tar java-11-openjdk java-11-openjdk-devel wget httpd lsof
 yum install -y python2-pip
 pip install gevent
 pip install gevent_websocket
@@ -78,6 +78,10 @@ cat /opt/ndex/conf/ndex-webapp-config.js | sed  "s/^ *ndexServerUri:.*/    ndexS
 mv -f /tmp/t.json /opt/ndex/conf/ndex-webapp-config.js
 chown ndex.ndex /opt/ndex/conf/ndex-webapp-config.js
 
+# Fix HostURI in ndex.properties
+cat /opt/ndex/conf/ndex.properties | sed "s/^ *HostURI.*=.*$/HostURI=http:\/\/localhost:8081/g" > /tmp/n.properties
+mv -f /tmp/n.properties /opt/ndex/conf/ndex.properties
+ 
 service httpd start
 sudo -u ndex /opt/ndex/solr/bin/solr start
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
@@ -95,6 +99,7 @@ sudo -u ndex ./Miniconda3-latest-Linux-x86_64.sh -p /opt/ndex/miniconda3 -b
 rm -f Miniconda3-latest-Linux-x86_64.sh
 
 /opt/ndex/miniconda3/bin/pip install ndex_webapp_python_exporters
+/opt/ndex/miniconda3/bin/pip install ndex2
 sleep 10
 
 echo "On your browser visit http://localhost:8081"
