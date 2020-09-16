@@ -8,7 +8,7 @@
 Creates virtual machine with [NDEx][ndex] installed following 
 instructions found here: 
 
-http://www.home.ndexbio.org/installation-instructions/
+ftp://ftp.ndexbio.org/latest_bundle
 
 ## Requirements
 
