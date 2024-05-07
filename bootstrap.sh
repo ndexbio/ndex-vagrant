@@ -23,6 +23,8 @@ useradd -r -m -U ndex
 
 # install base packages
 dnf install -y epel-release git gzip tar java-21-openjdk java-21-openjdk-devel wget httpd lsof
+dnf module reset postgresql -y
+dnf module enable postgresql:15 -y
 dnf install -y postgresql-server glibc-all-langpacks
 dnf install -y python39
 
@@ -48,9 +50,9 @@ dnf install -y python39
 
 # TODO
 # initialize postgres database and set it to startup upon boot
-# /usr/pgsql-9.5/bin/postgresql95-setup initdb
-# systemctl enable postgresql-9.5
-# systemctl start postgresql-9.5
+postgresql-setup initdb
+systemctl enable postgresql
+systemctl start postgresql
 
 
 
@@ -67,19 +69,19 @@ chmod go-wx /etc/httpd/conf.d/ndex.conf
 
 # TODO
 # initialize postgres database
-# sudo -u postgres psql < /vagrant/psql.cmds
-# sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
+sudo -u postgres psql < /vagrant/psql.cmds
+sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
 
 # TODO
 # Add postgres user permissions
-# echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
-# echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
-# cat /var/lib/pgsql/9.5/data/pg_hba.conf >> /tmp/pg_hba.conf
-# mv -f /tmp/pg_hba.conf /var/lib/pgsql/9.5/data/pg_hba.conf
+echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
+echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
+cat /var/lib/pgsql/9.5/data/pg_hba.conf >> /tmp/pg_hba.conf
+mv -f /tmp/pg_hba.conf /var/lib/pgsql/9.5/data/pg_hba.conf
 
 # TODO
 # restart postgres service
-# service postgresql-9.5 restart
+service postgresql restart
 
 # Fix url in ndex-webapp-config.js
 cat /opt/ndex/conf/ndex-webapp-config.js | sed  "s/^ *ndexServerUri:.*/    ndexServerUri: \"http:\/\/localhost:8081\/v2\",/g" > /tmp/t.json
