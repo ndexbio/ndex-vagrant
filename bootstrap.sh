@@ -4,50 +4,55 @@
 cd /opt
 ndextarball=`find /vagrant -name "ndex-*.tar.gz"`
 if [ $? -ne 0 ] ; then
-  echo "ERROR no NDEx tarball found. tarball can be downloaded from ftp://ftp.ndexbio.org/"
-  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.4.4/"
+  echo "ERROR no NDEx tarball found. A zip file that contains the tarball can be "
+  echo "downloaded from https://home.ndexbio.org/ftp_page/"
   exit 1
 fi
 
 if [ ! -f "$ndextarball" ] ; then
-  echo "ERROR no NDEx tarball found. tarball can be downloaded from ftp://ftp.ndexbio.org/"
-  echo "For example look under ftp://ftp.ndexbio.org/NDEx-v2.4.4/"
+  echo "ERROR no NDEx tarball found. A zip file that contains the tarball can be "
+  echo "downloaded from https://home.ndexbio.org/ftp_page/"
   exit 1
 fi
 ndextarballname=`basename $ndextarball`
 echo "ndextarball => $ndextarball"
 echo "ndextarballname => $ndextarballname"
 
+# add ndex user
+useradd -r -m -U ndex
+
 # install base packages
-yum install -y epel-release git gzip tar java-11-openjdk java-11-openjdk-devel wget httpd lsof
-yum install -y python2-pip
-pip install gevent
-pip install gevent_websocket
-pip install bottle 
+dnf install -y epel-release git gzip tar java-21-openjdk java-21-openjdk-devel wget httpd lsof
+dnf install -y postgresql-server glibc-all-langpacks
+dnf install -y python39
+
+# pip3 install gevent
+# pip3 install gevent_websocket
+# pip3 install bottle
 
 # pysolr is probably no longer needed
-pip install pysolr
+# pip install pysolr
 
+# TODO
 # open port 80 for http
-firewall-cmd --permanent --add-port=80/tcp
+# firewall-cmd --permanent --add-port=80/tcp
 
+# TODO
 # open port 8080 for http
-firewall-cmd --permanent --add-port=8080/tcp
+# firewall-cmd --permanent --add-port=8080/tcp
 
+# TODO
 # restart firewalld
-service firewalld restart
+# service firewalld restart
 
-# download and install postgres 9.5
-yum install -y https://download.postgresql.org/pub/repos/yum/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-3.noarch.rpm
-yum install -y postgresql95 postgresql95-server
 
+# TODO
 # initialize postgres database and set it to startup upon boot
-/usr/pgsql-9.5/bin/postgresql95-setup initdb
-systemctl enable postgresql-9.5
-systemctl start postgresql-9.5
+# /usr/pgsql-9.5/bin/postgresql95-setup initdb
+# systemctl enable postgresql-9.5
+# systemctl start postgresql-9.5
 
-# add ndex user
-useradd -M -r -s /bin/false -U ndex
+
 
 # Install ndex tarball
 echo "Using $ndextarballname as source for ndex"
@@ -60,18 +65,21 @@ chown -R ndex.ndex ndex
 cp /vagrant/ndex.conf /etc/httpd/conf.d/.
 chmod go-wx /etc/httpd/conf.d/ndex.conf
 
+# TODO
 # initialize postgres database
-sudo -u postgres psql < /vagrant/psql.cmds
-sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
+# sudo -u postgres psql < /vagrant/psql.cmds
+# sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
 
+# TODO
 # Add postgres user permissions
-echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
-echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
-cat /var/lib/pgsql/9.5/data/pg_hba.conf >> /tmp/pg_hba.conf
-mv -f /tmp/pg_hba.conf /var/lib/pgsql/9.5/data/pg_hba.conf
+# echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
+# echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
+# cat /var/lib/pgsql/9.5/data/pg_hba.conf >> /tmp/pg_hba.conf
+# mv -f /tmp/pg_hba.conf /var/lib/pgsql/9.5/data/pg_hba.conf
 
+# TODO
 # restart postgres service
-service postgresql-9.5 restart
+# service postgresql-9.5 restart
 
 # Fix url in ndex-webapp-config.js
 cat /opt/ndex/conf/ndex-webapp-config.js | sed  "s/^ *ndexServerUri:.*/    ndexServerUri: \"http:\/\/localhost:8081\/v2\",/g" > /tmp/t.json
