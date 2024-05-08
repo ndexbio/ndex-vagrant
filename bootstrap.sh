@@ -35,26 +35,10 @@ dnf install -y python39
 # pysolr is probably no longer needed
 # pip install pysolr
 
-# TODO
-# open port 80 for http
-# firewall-cmd --permanent --add-port=80/tcp
-
-# TODO
-# open port 8080 for http
-# firewall-cmd --permanent --add-port=8080/tcp
-
-# TODO
-# restart firewalld
-# service firewalld restart
-
-
-# TODO
 # initialize postgres database and set it to startup upon boot
 postgresql-setup --initdb --unit postgresql
 systemctl enable postgresql
 systemctl start postgresql
-
-
 
 # Install ndex tarball
 echo "Using $ndextarballname as source for ndex"
@@ -63,23 +47,31 @@ tar -zxf $ndextarballname
 mv `echo $ndextarballname | sed "s/\.tar\.gz//"` ndex
 chown -R ndex.ndex ndex
 
+# copy over systemd scripts
+cp /vagrant/systemd/ndex-solr.service /etc/systemd/system/.
+cp /vagrant/systemd/ndex-tomcat.service /etc/systemd/system/.
+cp /vagrant/systemd/ndex-query-engine2.service /etc/systemd/system/.
+
+# enable systemd scripts
+systemctl enable ndex-solr.service
+systemctl enable ndex-tomcat.service
+systemctl enable ndex-query-engine2.service
+
+
 # copy over apache config for ndex
 cp /vagrant/ndex.conf /etc/httpd/conf.d/.
 chmod go-wx /etc/httpd/conf.d/ndex.conf
 
-# TODO
 # initialize postgres database
 sudo -u postgres psql < /vagrant/psql.cmds
 sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
 
-# TODO
 # Add postgres user permissions
 echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
 echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
 cat /var/lib/pgsql/data/pg_hba.conf >> /tmp/pg_hba.conf
 mv -f /tmp/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
 
-# TODO
 # restart postgres service
 service postgresql restart
 
@@ -92,18 +84,20 @@ chown ndex.ndex /opt/ndex/conf/ndex-webapp-config.js
 cat /opt/ndex/conf/ndex.properties | sed "s/^ *HostURI.*=.*$/HostURI=http:\/\/localhost:8081/g" > /tmp/n.properties
 mv -f /tmp/n.properties /opt/ndex/conf/ndex.properties
 
-
 # Enable httpd access to port
 /usr/sbin/setsebool -P httpd_can_network_connect 1
 
+# Start apache
 service httpd start
-sudo -u ndex /opt/ndex/solr/bin/solr start
-sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
+
+# start solr
+systemctl start ndex-solr
 
 # start neighborhood query service
-pushd /opt/ndex/query_engine
-sudo -u ndex /opt/ndex/query_engine/run.sh
-popd
+systemctl start ndex-query-engine2
+
+# start tomcat
+systemctl start ndex-tomcat
 
 # install miniconda3
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
