@@ -50,7 +50,7 @@ dnf install -y python39
 
 # TODO
 # initialize postgres database and set it to startup upon boot
-postgresql-setup initdb
+postgresql-setup --initdb --unit postgresql
 systemctl enable postgresql
 systemctl start postgresql
 
@@ -76,8 +76,8 @@ sudo -u postgres psql ndex < /opt/ndex/scripts/ndex_db_schema.sql
 # Add postgres user permissions
 echo "local ndex ndexserver md5" > /tmp/pg_hba.conf
 echo "host ndex ndexserver 127.0.0.1/32 trust" >> /tmp/pg_hba.conf
-cat /var/lib/pgsql/9.5/data/pg_hba.conf >> /tmp/pg_hba.conf
-mv -f /tmp/pg_hba.conf /var/lib/pgsql/9.5/data/pg_hba.conf
+cat /var/lib/pgsql/data/pg_hba.conf >> /tmp/pg_hba.conf
+mv -f /tmp/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
 
 # TODO
 # restart postgres service
@@ -91,7 +91,11 @@ chown ndex.ndex /opt/ndex/conf/ndex-webapp-config.js
 # Fix HostURI in ndex.properties
 cat /opt/ndex/conf/ndex.properties | sed "s/^ *HostURI.*=.*$/HostURI=http:\/\/localhost:8081/g" > /tmp/n.properties
 mv -f /tmp/n.properties /opt/ndex/conf/ndex.properties
- 
+
+
+# Enable httpd access to port
+/usr/sbin/setsebool -P httpd_can_network_connect 1
+
 service httpd start
 sudo -u ndex /opt/ndex/solr/bin/solr start
 sudo -u ndex /opt/ndex/tomcat/bin/startup.sh
